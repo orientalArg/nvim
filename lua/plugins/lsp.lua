@@ -1,7 +1,7 @@
 return {
 	-- tools
 	{
-		"williamboman/mason.nvim",
+		"mason-org/mason.nvim",
 		opts = function(_, opts)
 			vim.list_extend(opts.ensure_installed, {
 				"stylua",
@@ -9,9 +9,17 @@ return {
 				"luacheck",
 				"shellcheck",
 				"shfmt",
+				"html-lsp",
+				"css-lsp",
+				"json-lsp",
+				"ruby-lsp",
+				"rubocop",
 				"tailwindcss-language-server",
 				"typescript-language-server",
-				"css-lsp",
+				"astro-language-server",
+				-- "eslint-lsp",
+				-- "prettier",
+				"deno",
 			})
 		end,
 	},
@@ -20,8 +28,7 @@ return {
 	{
 		"neovim/nvim-lspconfig",
 		opts = {
-			inlay_hints = { enabled = false },
-			---@type lspconfig.options
+			inlay_hints = { enabled = true },
 			servers = {
 				cssls = {},
 				tailwindcss = {
@@ -38,9 +45,9 @@ return {
 						typescript = {
 							inlayHints = {
 								includeInlayParameterNameHints = "literal",
-								includeInlayParameterNameHintsWhenArgumentMatchesName = false,
+								includeInlayParameterNameHintsWhenArgumentMatchesName = true,
 								includeInlayFunctionParameterTypeHints = true,
-								includeInlayVariableTypeHints = false,
+								includeInlayVariableTypeHints = true,
 								includeInlayPropertyDeclarationTypeHints = true,
 								includeInlayFunctionLikeReturnTypeHints = true,
 								includeInlayEnumMemberValueHints = true,
@@ -49,7 +56,7 @@ return {
 						javascript = {
 							inlayHints = {
 								includeInlayParameterNameHints = "all",
-								includeInlayParameterNameHintsWhenArgumentMatchesName = false,
+								includeInlayParameterNameHintsWhenArgumentMatchesName = true,
 								includeInlayFunctionParameterTypeHints = true,
 								includeInlayVariableTypeHints = true,
 								includeInlayPropertyDeclarationTypeHints = true,
@@ -67,8 +74,7 @@ return {
 						},
 					},
 				},
-				lua_ls = {
-					-- enabled = false,
+				lua_ls = { -- enabled = false,
 					single_file_support = true,
 					settings = {
 						Lua = {
@@ -122,7 +128,7 @@ return {
 								unusedLocalExclude = { "_*" },
 							},
 							format = {
-								enable = false,
+								enable = true,
 								defaultConfig = {
 									indent_style = "space",
 									indent_size = "2",

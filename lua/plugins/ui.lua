@@ -60,26 +60,12 @@ return {
 		},
 	},
 
-	{
-		"snacks.nvim",
-		opts = {
-			scroll = { enabled = false },
-		},
-		keys = {},
-	},
-
 	-- buffer line
 	{
 		"akinsho/bufferline.nvim",
-		event = "VeryLazy",
-		keys = {
-			{ "<Tab>", "<Cmd>BufferLineCycleNext<CR>", desc = "Next tab" },
-			{ "<S-Tab>", "<Cmd>BufferLineCyclePrev<CR>", desc = "Prev tab" },
-		},
 		opts = {
 			options = {
-				mode = "tabs",
-				-- separator_style = "slant",
+				mode = "buffers",
 				show_buffer_close_icons = false,
 				show_close_icon = false,
 			},
@@ -89,33 +75,61 @@ return {
 	-- filename
 	{
 		"b0o/incline.nvim",
-		dependencies = { "craftzdog/solarized-osaka.nvim" },
 		event = "BufReadPre",
 		priority = 1200,
-		config = function()
-			local colors = require("solarized-osaka.colors").setup()
-			require("incline").setup({
-				highlight = {
-					groups = {
-						InclineNormal = { guibg = colors.magenta500, guifg = colors.base04 },
-						InclineNormalNC = { guifg = colors.violet500, guibg = colors.base03 },
-					},
-				},
-				window = { margin = { vertical = 0, horizontal = 1 } },
-				hide = {
-					cursorline = true,
-				},
-				render = function(props)
-					local filename = vim.fn.fnamemodify(vim.api.nvim_buf_get_name(props.buf), ":t")
-					if vim.bo[props.buf].modified then
-						filename = "[+] " .. filename
-					end
+		opts = {
+			render = function(props)
+				local filename = vim.fn.fnamemodify(vim.api.nvim_buf_get_name(props.buf), ":t")
+				local ft_icon, ft_color = require("nvim-web-devicons").get_icon_color(filename)
+				local modified = vim.bo[props.buf].modified and "bold,italic" or "bold"
 
-					local icon, color = require("nvim-web-devicons").get_icon_color(filename)
-					return { { icon, guifg = color }, { " " }, { filename } }
-				end,
-			})
-		end,
+				local function get_git_diff()
+					local icons = { removed = "", changed = "", added = "" }
+					icons["changed"] = icons.modified
+					local signs = vim.b[props.buf].gitsigns_status_dict
+					local labels = {}
+					if signs == nil then
+						return labels
+					end
+					for name, icon in pairs(icons) do
+						if tonumber(signs[name]) and signs[name] > 0 then
+							table.insert(labels, { icon .. signs[name] .. " ", group = "Diff" .. name })
+						end
+					end
+					if #labels > 0 then
+						table.insert(labels, { "┊ " })
+					end
+					return labels
+				end
+				local function get_diagnostic_label()
+					local icons = { error = "", warn = "", info = "", hint = "" }
+					local label = {}
+
+					for severity, icon in pairs(icons) do
+						local n = #vim.diagnostic.get(
+							props.buf,
+							{ severity = vim.diagnostic.severity[string.upper(severity)] }
+						)
+						if n > 0 then
+							table.insert(label, { icon .. n .. " ", group = "DiagnosticSign" .. severity })
+						end
+					end
+					if #label > 0 then
+						table.insert(label, { "┊ " })
+					end
+					return label
+				end
+
+				local buffer = {
+					{ get_diagnostic_label() },
+					{ get_git_diff() },
+					{ (ft_icon or "") .. " ", guifg = ft_color, guibg = "none" },
+					{ filename .. " ", gui = modified },
+					{ "┊  " .. vim.api.nvim_win_get_number(props.win), group = "DevIconWindows" },
+				}
+				return buffer
+			end,
+		},
 	},
 
 	-- statusline
@@ -138,50 +152,62 @@ return {
 	},
 
 	{
-		"folke/zen-mode.nvim",
-		cmd = "ZenMode",
-		opts = {
-			plugins = {
-				gitsigns = true,
-				tmux = true,
-				kitty = { enabled = false, font = "+2" },
-			},
-		},
-		keys = { { "<leader>z", "<cmd>ZenMode<cr>", desc = "Zen Mode" } },
-	},
-
-	{
-		"MeanderingProgrammer/render-markdown.nvim",
-		enabled = false,
-	},
-	{
 		"folke/snacks.nvim",
+		---@type snacks.Config
 		opts = {
 			dashboard = {
 				preset = {
 					header = [[
- ▒█████   ██▀███   ██▓▓█████  ███▄    █ ▄▄▄█████▓ ▄▄▄       ██▓    
-▒██▒  ██▒▓██ ▒ ██▒▓██▒▓█   ▀  ██ ▀█   █ ▓  ██▒ ▓▒▒████▄    ▓██▒    
-▒██░  ██▒▓██ ░▄█ ▒▒██▒▒███   ▓██  ▀█ ██▒▒ ▓██░ ▒░▒██  ▀█▄  ▒██░    
-▒██   ██░▒██▀▀█▄  ░██░▒▓█  ▄ ▓██▒  ▐▌██▒░ ▓██▓ ░ ░██▄▄▄▄██ ▒██░    
-░ ████▓▒░░██▓ ▒██▒░██░░▒████▒▒██░   ▓██░  ▒██▒ ░  ▓█   ▓██▒░██████▒
-░ ▒░▒░▒░ ░ ▒▓ ░▒▓░░▓  ░░ ▒░ ░░ ▒░   ▒ ▒   ▒ ░░    ▒▒   ▓▒█░░ ▒░▓  ░
-  ░ ▒ ▒░   ░▒ ░ ▒░ ▒ ░ ░ ░  ░░ ░░   ░ ▒░    ░      ▒   ▒▒ ░░ ░ ▒  ░
-░ ░ ░ ▒    ░░   ░  ▒ ░   ░      ░   ░ ░   ░        ░   ▒     ░ ░   
-    ░ ░     ░      ░     ░  ░         ░                ░  ░    ░  ░
-                                                                   
- ▄▄▄       ██▀███    ▄████     ███▄    █ ██▒   █▓ ██▓ ███▄ ▄███▓   
-▒████▄    ▓██ ▒ ██▒ ██▒ ▀█▒    ██ ▀█   █▓██░   █▒▓██▒▓██▒▀█▀ ██▒   
-▒██  ▀█▄  ▓██ ░▄█ ▒▒██░▄▄▄░   ▓██  ▀█ ██▒▓██  █▒░▒██▒▓██    ▓██░   
-░██▄▄▄▄██ ▒██▀▀█▄  ░▓█  ██▓   ▓██▒  ▐▌██▒ ▒██ █░░░██░▒██    ▒██    
- ▓█   ▓██▒░██▓ ▒██▒░▒▓███▀▒   ▒██░   ▓██░  ▒▀█░  ░██░▒██▒   ░██▒   
- ▒▒   ▓▒█░░ ▒▓ ░▒▓░ ░▒   ▒    ░ ▒░   ▒ ▒   ░ ▐░  ░▓  ░ ▒░   ░  ░   
-  ▒   ▒▒ ░  ░▒ ░ ▒░  ░   ░    ░ ░░   ░ ▒░  ░ ░░   ▒ ░░  ░      ░   
-  ░   ▒     ░░   ░ ░ ░   ░       ░   ░ ░     ░░   ▒ ░░      ░      
-      ░  ░   ░           ░             ░      ░   ░         
-  ]],
+......░░░░░░.......................░░░░░░......
+.....░░░██░░░............. .......░░░██░░░.....
+....░░░████░░░░░░░░░░░░░░░░░░░░░░░░░████░░░....
+....░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░....
+....░░░░░░░░░░███░░░░░░░░░░░███░░░░░░░░░░░░....
+...░░░░░░░░███░█░███░░░░░███░█░███░░░░░░░░░░...
+..░░░░░░░░██░░░░░░░██░░░██░░░░░░░██░░░░░░░░░░..
+░░░░░░░░░░░███░░░███░░█░░███░░░███░░░░░░░░░░░░░
+.░░░░░░░░░░░░░███░░░░█░█░░░░███░░░░░░░░░░░░░░░.
+..░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░..
+..░░░░░░░░░░░░░░░█░░░░░░░░░░░░░░░░░░░░░░░░░░░..
+..░░░░░░░░░░░░░░░░██░░░░░░░░░░░░░░░░░░░░░░░░░..
+..░░░░░░░░░░░░░░░░░░██░░░░░░░░░░░░░░░░░░░░░░░..
+..░░░░░░░░░░░░░░░░██▒░░░░░░░░░░░░░░░░░░░░░░░░..
+...░░░░░░░░░░░░░░█░░░░░░░░░░░░░░░░░░░░░░░░░░...
+....░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░....
+.....░░░░░░...........@orientalArg..░░░░░░.....
+          ]],
 				},
 			},
 		},
 	},
 }
+-- ......░░░░░░.......................░░░░░░......
+-- .....░░░██░░░............. .......░░░██░░░.....
+-- ....░░░████░░░░░░░░░░░░░░░░░░░░░░░░░████░░░....
+-- ....░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░....
+-- ....░░░░░░░░░░███░░░░░░░░░░░███░░░░░░░░░░░░....
+-- ...░░░░░░░░███░█░███░░░░░███░█░███░░░░░░░░░░...
+-- ..░░░░░░░░██░░░░░░░██░░░██░░░░░░░██░░░░░░░░░░..
+-- ░░░░░░░░░░░███░░░███░░█░░███░░░███░░░░░░░░░░░░░
+-- .░░░░░░░░░░░░░███░░░░█░█░░░░███░░░░░░░░░░░░░░░.
+-- ..░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░..
+-- ..░░░░░░░░░░░░░░░█░░░░░░░░░░░░░░░░░░░░░░░░░░░..
+-- ..░░░░░░░░░░░░░░░░██░░░░░░░░░░░░░░░░░░░░░░░░░..
+-- ..░░░░░░░░░░░░░░░░░░██░░░░░░░░░░░░░░░░░░░░░░░..
+-- ..░░░░░░░░░░░░░░░░██▒░░░░░░░░░░░░░░░░░░░░░░░░..
+-- ...░░░░░░░░░░░░░░█░░░░░░░░░░░░░░░░░░░░░░░░░░...
+-- ....░░░░░░░░░░░░░░░░@orientalArg░░░░░░░░░░░....
+-- .....░░░░░░.........................░░░░░░.....
+--
+--      ██╗ ██████╗  █████╗  ██████╗ ██╗   ██╗██╗███╗   ██╗
+--      ██║██╔═══██╗██╔══██╗██╔═══██╗██║   ██║██║████╗  ██║
+-- ██   ██║██║   ██║██╔══██║██║▄▄ ██║██║   ██║██║██║╚██╗██║
+-- ╚█████╔╝╚██████╔╝██║  ██║╚██████╔╝╚██████╔╝██║██║ ╚████║
+-- ╚════╝  ╚═════╝ ╚═╝  ╚═╝ ╚══▀▀═╝  ╚═════╝ ╚═╝╚═╝  ╚═══╝
+--
+-- ██████╗ ███████╗██╗   ██╗███╗   ██╗ ██████╗ ███████╗ ██████╗
+-- ██╔══██╗██╔════╝╚██╗ ██╔╝████╗  ██║██╔═══██╗██╔════╝██╔═══██╗
+-- ██████╔╝█████╗   ╚████╔╝ ██╔██╗ ██║██║   ██║███████╗██║   ██║
+-- ██╔══██╗██╔══╝    ╚██╔╝  ██║╚██╗██║██║   ██║╚════██║██║   ██║
+-- ██║  ██║███████╗   ██║   ██║ ╚████║╚██████╔╝███████║╚██████╔╝
+-- ╚═╝  ╚═╝╚══════╝   ╚═╝   ╚═╝  ╚═══╝ ╚═════╝ ╚══════╝ ╚═════╝

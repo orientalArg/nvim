@@ -1,18 +1,40 @@
 return {
 	{
-		enabled = false,
-		"folke/flash.nvim",
-		---@type Flash.Config
+		"sindrets/diffview.nvim",
+	},
+	{
+		"nvim-neo-tree/neo-tree.nvim",
+		branch = "v3.x",
+		dependencies = {
+			"nvim-lua/plenary.nvim",
+			"MunifTanjim/nui.nvim",
+			"nvim-tree/nvim-web-devicons", -- optional, but recommended
+		},
+		lazy = false, -- neo-tree will lazily load itself
+		---@module 'neo-tree'
+		---@type neotree.Config
 		opts = {
-			search = {
-				forward = true,
-				multi_window = false,
-				wrap = false,
-				incremental = true,
+			-- options go here
+			window = {
+				position = "float", -- Set the default position to "float"
+				-- Optional: further configure the appearance of the floating window
+				float = {
+					border = "rounded", -- or "single", "double", "none"
+					width = 30, -- Adjust width as needed
+					height = 30, -- Adjust height as needed
+					-- Additional options like 'row' and 'col' for fixed positioning
+				},
+				-- Other window options...
+			},
+			filesystem = {
+				filtered_items = {
+					hide_dotfiles = false, -- Set to false to show hidden files
+					hide_gitignored = true, -- You might still want to hide git-ignored files
+					--visible = true, -- Setting this to true will *dim* filtered items instead of hiding them
+				},
 			},
 		},
 	},
-
 	{
 		"brenoprata10/nvim-highlight-colors",
 		event = "BufReadPre",
