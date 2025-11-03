@@ -16,7 +16,7 @@ return {
 		opts = {
 			-- options go here
 			window = {
-				position = "float", -- Set the default position to "float"
+				position = "left", -- Set the default position to "float"
 				-- Optional: further configure the appearance of the floating window
 				float = {
 					border = "rounded", -- or "single", "double", "none"
