@@ -6,7 +6,6 @@ local keymap = vim.keymap
 local opts = { noremap = true, silent = true }
 
 vim.keymap.set("n", "e", "el", { noremap = true, silent = true, desc = "End of word + 1 (Jump)" })
--- Do things without affecting the registers
 keymap.set("n", "x", '"_x')
 keymap.set("n", "<Leader>p", '"0p')
 keymap.set("n", "<Leader>P", '"0P')

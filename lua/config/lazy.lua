@@ -12,17 +12,16 @@ if not vim.loop.fs_stat(lazypath) then
 end
 
 vim.opt.rtp:prepend(lazypath)
+vim.o.background = "light"
 
 require("lazy").setup({
 	spec = {
-		-- add LazyVim and import its plugins
 		{
 			"LazyVim/LazyVim",
 			import = "lazyvim.plugins",
-			-- colorscheme = "tokyonight",
-			-- colorscheme = "lunaperche",
 			opts = {
-				colorscheme = "catppuccin",
+				-- colorscheme = "catppuccin",
+				colorscheme = "gruvbox",
 				news = {
 					lazyvim = true,
 					neovim = true,
