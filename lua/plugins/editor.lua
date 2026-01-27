@@ -24,7 +24,7 @@ return {
 				},
 			},
 			window = {
-				position = "left", -- Set the default position to "float"
+				position = "float", -- Set the default position to "float"
 				-- Optional: further configure the appearance of the floating window
 				float = {
 					border = "none", -- or "single", "double", "none"
