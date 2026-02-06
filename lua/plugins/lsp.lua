@@ -12,7 +12,7 @@ return {
 				"html-lsp",
 				"css-lsp",
 				"json-lsp",
-				"ruby-lsp",
+				-- "ruby-lsp",
 				"rubocop",
 				"tailwindcss-language-server",
 				"typescript-language-server",
@@ -32,9 +32,10 @@ return {
 			servers = {
 				cssls = {},
 				tailwindcss = {
-					root_dir = function(...)
-						return require("lspconfig.util").root_pattern(".git")(...)
-					end,
+					filetypes_include = { "astro-language-server", "astro" },
+					-- root_dir = function(...)
+					-- 	return require("lspconfig.util").root_pattern(".git")(...)
+					-- end,
 				},
 				tsserver = {
 					root_dir = function(...)
