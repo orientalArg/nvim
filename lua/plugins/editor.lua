@@ -27,8 +27,10 @@ return {
 				position = "float", -- Set the default position to "float"
 				-- Optional: further configure the appearance of the floating window
 				float = {
-					border = "none", -- or "single", "double", "none"
+					border = "single", -- or "single", "double", "none"
 					width = 30, -- Adjust width as needed
+					auto_expand_width = true,
+					auto_expand_height = true,
 					height = 30, -- Adjust height as needed
 					-- Additional options like 'row' and 'col' for fixed positioning
 				},
