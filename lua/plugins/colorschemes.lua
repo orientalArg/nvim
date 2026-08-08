@@ -6,77 +6,78 @@ return {
 		opts = function()
 			return {
 				transparent_mode = true,
+				transparent_background = true,
 			}
 		end,
 	},
+	{
+		"catppuccin/nvim",
+		priority = 1000,
+		opts = function()
+			return {
+				transparent_background = true,
+				flavour = "mocha",
+				integrations = {
+					bufferline = true, -- Enable bufferline integration
+					treesitter = true,
+					telescope = {
+						enabled = true,
+					},
+				},
+				-- },
+			}
+		end,
+		config = function(_, opts)
+			require("catppuccin").setup(opts)
+			-- This section is crucial for passing the colors to bufferline.nvim
+			vim.cmd.colorscheme("catppuccin")
+			require("bufferline").setup({
+				options = {
+					separator_style = "slant",
+					highlights = {
+						fill = {
+							bg = require("catppuccin.palettes").get_palette().base,
+						},
+					},
+				},
+			})
+		end,
+	},
+	{
+		"folke/tokyonight.nvim",
+		lazy = true,
+		priority = 1000,
+		opts = function()
+			return {
+				transparent = false,
+			}
+		end,
+		{
+			"alexanderjeurissen/lumiere.vim",
+			lazy = true,
+			priority = 1000,
+			-- use config instead of opts for vim
+			config = function()
+				return {
+					transparent_background = false,
+				}
+			end,
+		},
+	},
+	{
+		"craftzdog/solarized-osaka.nvim",
+		lazy = true,
+		priority = 1000,
+		opts = function()
+			return { transparent = false }
+		end,
+	},
+	{
+		"shaunsingh/nord.nvim",
+		lazy = true,
+		priority = 1000,
+		opts = function()
+			return { transparent = false }
+		end,
+	},
 }
--- {
--- 	"catppuccin/nvim",
--- 	priority = 1000,
--- 	opts = function()
--- 		return {
--- 			transparent_background = false,
--- 			flavour = "latte",
--- 			integrations = {
--- 				bufferline = true, -- Enable bufferline integration
--- 				treesitter = true,
--- 				telescope = {
--- 					enabled = true,
--- 				},
--- 			},
--- 			-- },
--- 		}
--- 	end,
--- 	config = function(_, opts)
--- 		require("catppuccin").setup(opts)
--- 		-- This section is crucial for passing the colors to bufferline.nvim
--- 		vim.cmd.colorscheme("catppuccin")
--- 		require("bufferline").setup({
--- 			options = {
--- 				separator_style = "slant",
--- 				highlights = {
--- 					fill = {
--- 						bg = require("catppuccin.palettes").get_palette().base,
--- 					},
--- 				},
--- 			},
--- 		})
--- 	end,
--- },
--- {
--- 	"folke/tokyonight.nvim",
--- 	lazy = true,
--- 	priority = 1000,
--- 	opts = function()
--- 		return {
--- 			transparent = false,
--- 		}
--- 	end,
--- 	{
--- 		"alexanderjeurissen/lumiere.vim",
--- 		lazy = true,
--- 		priority = 1000,
--- 		-- use config instead of opts for vim
--- 		config = function()
--- 			return {
--- 				transparent_background = false,
--- 			}
--- 		end,
--- 	},
--- },
--- {
--- 	"craftzdog/solarized-osaka.nvim",
--- 	lazy = true,
--- 	priority = 1000,
--- 	opts = function()
--- 		return { transparent = false }
--- 	end,
--- },
--- {
--- 	"shaunsingh/nord.nvim",
--- 	lazy = true,
--- 	priority = 1000,
--- 	opts = function()
--- 		return { transparent = false }
--- 	end,
--- },
