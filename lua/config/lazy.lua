@@ -20,8 +20,12 @@ require("lazy").setup({
 			"LazyVim/LazyVim",
 			import = "lazyvim.plugins",
 			opts = {
-				-- colorscheme = "catppuccin",
-				colorscheme = "gruvbox",
+				-- change one of the colorscheme to change theme, if you have a quickshell distro then uncomment to enable automatic theme change
+				colorscheme = "catppuccin",
+				-- colorscheme = "gruvbox",
+				-- colorscheme = "lumiere",
+				-- colorscheme = "base16-catppuccin-mocha",
+				-- colorscheme = "tokyonight-moon",
 				news = {
 					lazyvim = true,
 					neovim = true,
